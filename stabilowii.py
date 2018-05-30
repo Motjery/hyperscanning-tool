@@ -17,7 +17,6 @@ def main():
     board = wiiboard.Wiiboard()
 
     pygame.init()
-
     address = board.discover()
     board.connect(address)  # The wii board must be in sync mode at this time
 
@@ -34,8 +33,8 @@ def main():
     while (not done):
         time.sleep(0.05)
         for event in pygame.event.get():
+            str(pygame.event.get())
             if event.type == wiiboard.WIIBOARD_MASS:
-              #  print("event type ", event.type)
                 if (event.mass.totalWeight > weight_threshold):
                     #time.sleep(0.05)
                     if recording:
@@ -68,6 +67,7 @@ def main():
                                          (250 + x_1), (150 + y_1), 5, 5])
                         # pygame.event.clear()
                         pygame.display.update()
+                        time.sleep(0.001)
 
                         # End of recording ?
                         if ((time.time() - init_time) > time_limit):
@@ -102,16 +102,17 @@ def main():
                     recording = True
 
             # Press any key on the computer keyboard to quit
-            elif event.type == pygame.QUIT:
+            elif event.type == QUIT:
                 print "Quit !"
                 # output_file.close()
                 done = True
-
+                pygame.display.update()
             # Other event types:
             # wiiboard.WIIBOARD_CONNECTED
             # wiiboard.WIIBOARD_DISCONNECTED
-    board.disconnect()
     pygame.quit()
+    board.disconnect()
+    sys.exit()
 
 
 # Run the script if executed
