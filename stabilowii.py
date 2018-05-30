@@ -6,12 +6,6 @@ import time
 import curses
 import pygame.gfxdraw
 from pygame.locals import *
-import pandas as pd
-
-# modified from wiiboard-simple
-# Author : Sylvain Hanneton 2011
-# 24 sept. 2011
-
 
 def main():
     board = wiiboard.Wiiboard()
@@ -39,14 +33,15 @@ def main():
                     #time.sleep(0.05)
                     if recording:
                         maSurface = pygame.display.set_mode((500, 300))
-                        pygame.draw.line(maSurface, (0, 0, 255),
+                        maSurface.fill((255,255,255))
+                        pygame.draw.line(maSurface, (0, 0, 0),
                                          (250, 0), (250, 300), 1)
-                        pygame.draw.line(maSurface, (0, 0, 255),
+                        pygame.draw.line(maSurface, (0, 0, 0),
                                          (0, 150), (500, 150), 1)
                         pygame.display.set_caption('Wiiboard caption')
                         total = event.mass.totalWeight
-                        x = ((event.mass.topRight + event.mass.bottomRight) -
-                             (event.mass.topLeft + event.mass.bottomLeft)) / total
+                        x = ((event.mass.topLeft + event.mass.bottomLeft)-(event.mass.topRight + event.mass.bottomRight) 
+                             ) / total
                         y = ((event.mass.topRight + event.mass.topLeft) -
                              (event.mass.bottomRight + event.mass.bottomLeft)) / total
 #                        output_filename = 'stab_' + time.asctime() + '.txt'
@@ -60,10 +55,10 @@ def main():
 #                        output_file.write(`x`+'\t')
 #                        output_file.write(`y`+'\n')
 #                        output_file.flush()
-                        x_1 = int(x*100)
-                        y_1 = int(y*100)
+                        x_1 = int(x*245)
+                        y_1 = int(y*145)
 #                        print (`x_1` +'\t' + `y_1` + '\n')
-                        pygame.draw.rect(maSurface, (255, 255, 255), [
+                        pygame.draw.rect(maSurface, (0, 0, 0), [
                                          (250 + x_1), (150 + y_1), 5, 5])
                         # pygame.event.clear()
                         pygame.display.update()
