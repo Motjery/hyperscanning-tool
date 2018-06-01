@@ -1,3 +1,6 @@
+#L'ellipse de confiance regroupe 90% des points  du graphe.
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
