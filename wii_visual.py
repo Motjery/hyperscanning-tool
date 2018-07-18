@@ -5,6 +5,7 @@ import pyqtgraph as pg
 import socket
 import sys
 import threading
+import numpy as np
 
 host = '10.216.25.133'
 port = 50000
@@ -28,7 +29,15 @@ class ThreadReception(threading.Thread):
                 return(coordone)
 
 
-
+def resizing(tab):
+    
+    if(len(tab) > 50):
+        tab = tab[1:len(tab):1]
+#        print("size tab now:" , len(tab))
+        return tab
+    else:
+        return tab
+#        print(len(tab))
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -50,8 +59,8 @@ pg.setConfigOptions(antialias=True)
 # X borad 1
 p1 = win.addPlot(title="Board 1 : X")
 p1.setYRange(-1.5, 1.5)
-x1 = []
-t1 = []
+x1 = np.array([])
+t1 = np.array([])
 curve1 = p1.plot(pen='y')
 
 def update1():
@@ -64,9 +73,11 @@ def update1():
     #    data = data.decode()
         b = reception_board2.split(",")
         t_1 = float(b[2])
-        t1.append(t_1)
+        t1 = np.append(t1, t_1)
+        t1 = resizing(t1)
         x_1 = float(b[0])
-        x1.append(x_1)
+        x1 = np.append(x1, x_1)
+        x1 = resizing(x1)
         curve1.setData(t1, x1)
     except:
         #curve1.setData(t1, x1)
@@ -77,8 +88,8 @@ def update1():
 # Y borad 1
 p2 = win.addPlot(title="Board 1 : Y")
 p2.setYRange(-1.5, 1.5)
-y1 = []
-t12 = []
+y1 = np.array([])
+t12 = np.array([])
 curve2 = p2.plot(pen='y')
 
 def update2():
@@ -89,9 +100,11 @@ def update2():
     #    data, addr = connection.recvfrom(256)
         b = reception_board2.split(",")
         t_12 = float(b[2])
-        t12.append(t_12)
+        t12 = np.append(t12, t_12)
+        t12 = resizing(t12)
         y_1 = float(b[1])
-        y1.append(y_1)
+        y1 = np.append(y1, y_1)
+        y1 = resizing(y1)
         curve2.setData(t12, y1)
     except:
         #curve2.setData(t12, y1)
@@ -99,8 +112,8 @@ def update2():
 
 
 p5 = win.addPlot(title="Borad 1 : XY")
-x3 = []
-y3 = []
+x3 = np.array([])
+y3 = np.array([])
 curve5 = p5.plot(pen='y')
 
 def update5():
@@ -113,9 +126,9 @@ def update5():
     #    data = data.decode()
         b = reception_board2.split(",")
         y_3 = float(b[1])
-        y3.append(y_3)
+        y3 = np.append(y3, y_3)
         x_3 = float(b[0])
-        x3.append(x_3)
+        x3 = np.append(x3, x_3)
         curve5.setData(x3, y3)
     except:
         #curve1.setData(t1, x1)
@@ -127,8 +140,8 @@ win.nextRow()
 # X borad 2
 p3 = win.addPlot(title="Board 2 : X")
 p3.setYRange(-1.5, 1.5)
-x2 = []
-t2 = []
+x2 = np.array([])
+t2 = np.array([])
 curve3 = p3.plot(pen='r')
 
 def update3():
@@ -138,9 +151,11 @@ def update3():
         reception_board2 = msg_rcv.run()
         b = reception_board2.split(",")
         t_2 = float(b[2])
-        t2.append(t_2)
+        t2 = np.append(t2, t_2)
+        t2 = resizing(t2)
         x_2 = float(b[0])
-        x2.append(x_2)
+        x2 = np.append(x2, x_2)
+        x2 = resizing(x2)
         curve3.setData(t2, x2)
     except:
         #curve3.setData(t2, x2)
@@ -151,8 +166,8 @@ def update3():
 
 p4 = win.addPlot(title="Borad 2 : Y")
 p4.setYRange(-1.5, 1.5)
-y2 = []
-t22 = []
+y2 = np.array([])
+t22 = np.array([])
 curve4 = p4.plot(pen='r')
 
 def update4():
@@ -160,19 +175,23 @@ def update4():
     msg_rcv = ThreadReception(connection)
     try:
         reception_board2 = msg_rcv.run()
+    #    data, addr = connection.recvfrom(256)
         b = reception_board2.split(",")
         t_22 = float(b[2])
-        t22.append(t_22)
+        t22 = np.append(t22, t_22)
+        t22 = resizing(t22)
         y_2 = float(b[1])
-        y2.append(y_2)
+        y2 = np.append(y2, y_2)
+        y2 = resizing(y2)
         curve4.setData(t22, y2)
     except:
-        #curve4.setData(t22, y2)
+        #curve2.setData(t12, y1)
         pass
 
+
 p6 = win.addPlot(title="Borad 1 : XY")
-x4 = []
-y4 = []
+x4 = np.array([])
+y4 = np.array([])
 curve6 = p6.plot(pen='r')
 
 def update6():
@@ -185,9 +204,9 @@ def update6():
     #    data = data.decode()
         b = reception_board2.split(",")
         y_4 = float(b[1])
-        y4.append(y_4)
+        y4 = np.append(y4, y_4)
         x_4 = float(b[0])
-        x4.append(x_4)
+        x4 = np.append(x4, x_4)
         curve6.setData(x4, y4)
     except:
         #curve1.setData(t1, x1)
@@ -224,4 +243,3 @@ if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
         QtGui.QApplication.instance().exec_()
-
