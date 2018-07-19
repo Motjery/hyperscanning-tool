@@ -6,10 +6,14 @@ import socket
 import sys
 import threading
 import numpy as np
+from scipy import signal, stats
 
 host = '10.216.25.133'
+host2 = '10.216.37.28'
 port = 50000
 port2 = 40000
+port_filter = 10000
+timer = {}
 
 
 class ThreadReception(threading.Thread):
@@ -21,16 +25,15 @@ class ThreadReception(threading.Thread):
         # ref. du socket de connection###
 
     def run(self):
-            while 1:
-                message_recu = self.connection.recv(1024)
-                message_recu = message_recu.decode()
-                a = message_recu.split("|")
-                coordone = a[len(a) - 2]
-                return(coordone)
+        while 1:
+            message_recu = self.connection.recv(1024)
+            message_recu = message_recu.decode()
+            a = message_recu.split("|")
+            coordone = a[len(a) - 2]
+            return(coordone)
 
 
 def resizing(tab):
-    
     if(len(tab) > 50):
         tab = tab[1:len(tab):1]
 #        print("size tab now:" , len(tab))
@@ -39,14 +42,62 @@ def resizing(tab):
         return tab
 #        print(len(tab))
 
+
+def crosscorr(a, b):
+    np.seterr(divide='ignore', invalid='ignore')
+    try:
+        a = (a - np.mean(a)) / (np.std(a) * len(a))
+        b = (b - np.mean(b)) / (np.std(b))
+        cross_corre = signal.fftconvolve(a, b[::-1], mode='same')
+        return cross_corre
+    except:
+        pass
+
+
+def coefcross(a, b):
+    np.seterr(divide='ignore', invalid='ignore')
+    try:
+        coef_corre = stats.pearsonr(a, b)
+        return coef_corre[0]
+    except:
+        pass
+
+
+def compare(coef_pearsona, coef_pearsonb):
+
+    coef_pearsonX = np.abs(coef_pearsona)
+    coef_pearsonY = np.abs(coef_pearsonb)
+    coef_pearson = (coef_pearsonY + coef_pearsonX) / 2
+    values = np.arange(0, 1, 0.1)
+    message = np.arange(10, 20, 1)
+    i = 9
+    while i >= 0:
+        if coef_pearson < values[i]:
+            i -= 1
+        else:
+            a = str(message[i]) + ";"
+            print(a)
+            pd_connection_filter.send((a).encode())
+            i = -1
+
+
+def makegrahupdate(graph, number):
+    global timer
+    timer['time' + str(number)] = QtCore.QTimer()
+    timer['time' + str(number)].timeout.connect(graph)
+    timer['time' + str(number)].start()
+
+
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+pd_connection_filter = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 # connection.close()
 #connection.bind((host, port))
 
 connection.connect((host, port))
 connection2.connect((host, port2))
-
+pd_connection_filter.connect((host2, port_filter))
 
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title="Basic plotting examples")
@@ -63,12 +114,12 @@ x1 = np.array([])
 t1 = np.array([])
 curve1 = p1.plot(pen='y')
 
+
 def update1():
     global curve1, x1, t1, p1
     msg_rcv = ThreadReception(connection2)
     try:
         reception_board2 = msg_rcv.run()
-        print(reception_board2)
     #    data , addr = connection.recvfrom(256)
     #    data = data.decode()
         b = reception_board2.split(",")
@@ -92,6 +143,7 @@ y1 = np.array([])
 t12 = np.array([])
 curve2 = p2.plot(pen='y')
 
+
 def update2():
     global curve2, y1, t12, p2
     msg_rcv = ThreadReception(connection2)
@@ -112,16 +164,19 @@ def update2():
 
 
 p5 = win.addPlot(title="Borad 1 : XY")
+p5.setYRange(-1, 1)
+p5.setXRange(-1, 1)
+
 x3 = np.array([])
 y3 = np.array([])
 curve5 = p5.plot(pen='y')
+
 
 def update5():
     global curve5, x3, y3, p5
     msg_rcv = ThreadReception(connection2)
     try:
         reception_board2 = msg_rcv.run()
-        print(reception_board2)
     #    data , addr = connection.recvfrom(256)
     #    data = data.decode()
         b = reception_board2.split(",")
@@ -134,6 +189,7 @@ def update5():
         #curve1.setData(t1, x1)
         pass
 
+
 win.nextRow()
 
 
@@ -143,6 +199,7 @@ p3.setYRange(-1.5, 1.5)
 x2 = np.array([])
 t2 = np.array([])
 curve3 = p3.plot(pen='r')
+
 
 def update3():
     global curve3, x2, t2, p3
@@ -170,6 +227,7 @@ y2 = np.array([])
 t22 = np.array([])
 curve4 = p4.plot(pen='r')
 
+
 def update4():
     global curve4, y2, t22, p4
     msg_rcv = ThreadReception(connection)
@@ -189,17 +247,21 @@ def update4():
         pass
 
 
-p6 = win.addPlot(title="Borad 1 : XY")
+
+p6 = win.addPlot(title="Borad 2 : XY")
+p6.setYRange(-1, 1)
+
+p6.setXRange(-1, 1)
 x4 = np.array([])
 y4 = np.array([])
 curve6 = p6.plot(pen='r')
+
 
 def update6():
     global curve6, x4, y4, p6
     msg_rcv = ThreadReception(connection)
     try:
         reception_board2 = msg_rcv.run()
-        print(reception_board2)
     #    data , addr = connection.recvfrom(256)
     #    data = data.decode()
         b = reception_board2.split(",")
@@ -213,32 +275,61 @@ def update6():
         pass
 
 
+win.nextRow()
 
-timer = QtCore.QTimer()
-timer.timeout.connect(update1)
-timer.start()
 
-timer2 = QtCore.QTimer()
-timer2.timeout.connect(update2)
-timer2.start()
+p7 = win.addPlot(title="Cross correlation X")
+p7.setYRange(-1, 1)
+curve7 = p7.plot(pen='r')
 
-timer3 = QtCore.QTimer()
-timer3.timeout.connect(update3)
-timer3.start()    #
+coeffX = 0.0
+def update7():
+    global crossX, coeffX, p7, curve7
+    try:
+        crossX = crosscorr(x1, x2)
+        samplesX = np.arange(len(crossX))
+        #        print("cross correlation:",crossX,"\n"*4)
+        coeffX = coefcross(x1, x2)
+#        print("coeffX", coeffX, "\n" * 2)
+        curve7.setData(samplesX, crossX)
+        return coeffX
+    except:
+        pass
 
-timer4 = QtCore.QTimer()
-timer4.timeout.connect(update4)
-timer4.start()
 
-timer5 = QtCore.QTimer()
-timer5.timeout.connect(update5)
-timer5.start()
+p8 = win.addPlot(title="Cross correlation y")
+p8.setYRange(-1, 1)
+curve8 = p8.plot(pen='r')
 
-timer6 = QtCore.QTimer()
-timer6.timeout.connect(update6)
-timer6.start()
+global coeffY
 
-## Start Qt event loop unless running in interactive mode or using pyside.
+
+def update8():
+    global curve8, crossY, coeffY 
+    try:
+
+        crossY = crosscorr(y1, y2)
+        samplesY = np.arange(len(crossY))
+        #print("cross correlation:", crossY, "\n" * 4)
+        coeffY = coefcross(y1, y2)
+        #print(coeffY)
+       # print("coeffY", coeffY, "\n" * 2)
+        compare(coeffX,coeffY)
+        curve8.setData(samplesY, crossY)
+    except:
+        #curve1.setData(t1, x1)
+        pass
+
+makegrahupdate(update1, 1)
+makegrahupdate(update2, 2)
+makegrahupdate(update3, 3)
+makegrahupdate(update4, 4)
+makegrahupdate(update5, 5)
+makegrahupdate(update6, 6)
+makegrahupdate(update7, 7)
+makegrahupdate(update8, 8)
+
+# Start Qt event loop unless running in interactive mode or using pyside.
 if __name__ == '__main__':
     import sys
     if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
