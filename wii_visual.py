@@ -33,10 +33,9 @@ class ThreadReception(threading.Thread):
             return(coordone)
 
 
-def resizing(tab):
-    if(len(tab) > 50):
+def resizing(tab, size):
+    if(len(tab) > size):
         tab = tab[1:len(tab):1]
-#        print("size tab now:" , len(tab))
         return tab
     else:
         return tab
@@ -77,7 +76,7 @@ def compare(coef_pearsona, coef_pearsonb):
         else:
             a = str(message[i]) + ";"
             print(a)
-            pd_connection_filter.send((a).encode())
+#            pd_connection_filter.send((a).encode())
             i = -1
 
 
@@ -90,14 +89,14 @@ def makegrahupdate(graph, number):
 
 connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 connection2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-pd_connection_filter = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#pd_connection_filter = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # connection.close()
 #connection.bind((host, port))
 
 connection.connect((host, port))
 connection2.connect((host, port2))
-pd_connection_filter.connect((host2, port_filter))
+#pd_connection_filter.connect((host2, port_filter))
 
 app = QtGui.QApplication([])
 win = pg.GraphicsWindow(title="Basic plotting examples")
@@ -125,10 +124,10 @@ def update1():
         b = reception_board2.split(",")
         t_1 = float(b[2])
         t1 = np.append(t1, t_1)
-        t1 = resizing(t1)
+        t1 = resizing(t1, 30)
         x_1 = float(b[0])
         x1 = np.append(x1, x_1)
-        x1 = resizing(x1)
+        x1 = resizing(x1, 30)
         curve1.setData(t1, x1)
     except:
         #curve1.setData(t1, x1)
@@ -153,17 +152,17 @@ def update2():
         b = reception_board2.split(",")
         t_12 = float(b[2])
         t12 = np.append(t12, t_12)
-        t12 = resizing(t12)
+        t12 = resizing(t12, 30)
         y_1 = float(b[1])
         y1 = np.append(y1, y_1)
-        y1 = resizing(y1)
+        y1 = resizing(y1, 30)
         curve2.setData(t12, y1)
     except:
         #curve2.setData(t12, y1)
         pass
 
 
-p5 = win.addPlot(title="Borad 1 : XY")
+p5 = win.addPlot(title="Stabilometry Board 1")
 p5.setYRange(-1, 1)
 p5.setXRange(-1, 1)
 
@@ -182,8 +181,10 @@ def update5():
         b = reception_board2.split(",")
         y_3 = float(b[1])
         y3 = np.append(y3, y_3)
+        y3 = resizing(y3, 60)
         x_3 = float(b[0])
         x3 = np.append(x3, x_3)
+        x3 = resizing(x3, 60)
         curve5.setData(x3, y3)
     except:
         #curve1.setData(t1, x1)
@@ -209,10 +210,10 @@ def update3():
         b = reception_board2.split(",")
         t_2 = float(b[2])
         t2 = np.append(t2, t_2)
-        t2 = resizing(t2)
+        t2 = resizing(t2, 30)
         x_2 = float(b[0])
         x2 = np.append(x2, x_2)
-        x2 = resizing(x2)
+        x2 = resizing(x2, 30)
         curve3.setData(t2, x2)
     except:
         #curve3.setData(t2, x2)
@@ -237,18 +238,17 @@ def update4():
         b = reception_board2.split(",")
         t_22 = float(b[2])
         t22 = np.append(t22, t_22)
-        t22 = resizing(t22)
+        t22 = resizing(t22, 30)
         y_2 = float(b[1])
         y2 = np.append(y2, y_2)
-        y2 = resizing(y2)
+        y2 = resizing(y2, 30)
         curve4.setData(t22, y2)
     except:
         #curve2.setData(t12, y1)
         pass
 
 
-
-p6 = win.addPlot(title="Borad 2 : XY")
+p6 = win.addPlot(title="Stabilometry Board 2")
 p6.setYRange(-1, 1)
 
 p6.setXRange(-1, 1)
@@ -267,8 +267,10 @@ def update6():
         b = reception_board2.split(",")
         y_4 = float(b[1])
         y4 = np.append(y4, y_4)
+        y4 = resizing(y4, 60)
         x_4 = float(b[0])
         x4 = np.append(x4, x_4)
+        x4 = resizing(x4, 60)
         curve6.setData(x4, y4)
     except:
         #curve1.setData(t1, x1)
@@ -280,45 +282,42 @@ win.nextRow()
 
 p7 = win.addPlot(title="Cross correlation X")
 p7.setYRange(-1, 1)
-curve7 = p7.plot(pen='r')
+curve7 = p7.plot(pen='c')
 
 coeffX = 0.0
+
+
 def update7():
     global crossX, coeffX, p7, curve7
     try:
         crossX = crosscorr(x1, x2)
         samplesX = np.arange(len(crossX))
-        #        print("cross correlation:",crossX,"\n"*4)
         coeffX = coefcross(x1, x2)
-#        print("coeffX", coeffX, "\n" * 2)
         curve7.setData(samplesX, crossX)
         return coeffX
     except:
         pass
 
 
-p8 = win.addPlot(title="Cross correlation y")
+p8 = win.addPlot(title="Cross correlation Y")
 p8.setYRange(-1, 1)
-curve8 = p8.plot(pen='r')
+curve8 = p8.plot(pen='c')
 
 global coeffY
 
 
 def update8():
-    global curve8, crossY, coeffY 
+    global curve8, crossY, coeffY
     try:
 
         crossY = crosscorr(y1, y2)
         samplesY = np.arange(len(crossY))
-        #print("cross correlation:", crossY, "\n" * 4)
         coeffY = coefcross(y1, y2)
-        #print(coeffY)
-       # print("coeffY", coeffY, "\n" * 2)
-        compare(coeffX,coeffY)
+        compare(coeffX, coeffY)
         curve8.setData(samplesY, crossY)
     except:
-        #curve1.setData(t1, x1)
         pass
+
 
 makegrahupdate(update1, 1)
 makegrahupdate(update2, 2)
