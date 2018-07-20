@@ -2,11 +2,14 @@ import controlP5.*;
 import oscP5.*;
 import netP5.*;
 
+import ddf.minim.*;
+Minim minim;
+
 ControlP5 cp5;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 int valeur;
-
+AudioPlayer music;
 
 int x1=50,y1=300,x2=550,y2=300,a1=0,a2=2,t,w=0,rs=0,bs;
 void setup(){
@@ -15,6 +18,11 @@ void setup(){
   background(255);
   textAlign(LEFT,TOP);
   strokeWeight(1.5);
+  minim = new Minim(this);
+  music = minim.loadFile("sound.wav", 1024);
+  music.loop();
+  
+  
        cp5 = new ControlP5(this);
   
   /* start oscP5, listening for incoming messages at port 12000 */
@@ -192,4 +200,14 @@ void reset(){
   valeur = theOscMessage.get(0).intValue();
   print(valeur);
   }
+}
+
+void stop() { // automatically called when program exits. here we'll stop and unload sounds.
+  music.close();
+  //sndJump.close();
+  //sndCoin.close();
+ 
+  minim.stop();
+
+  super.stop(); // tells program to continue doing its normal ending activity
 }
