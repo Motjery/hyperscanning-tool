@@ -5,7 +5,7 @@ import netP5.*;
 ControlP5 cp5;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
-
+int valeur;
 
 
 int x1=50,y1=300,x2=550,y2=300,a1=0,a2=2,t,w=0,rs=0,bs;
