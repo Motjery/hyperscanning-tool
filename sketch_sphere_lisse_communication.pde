@@ -8,7 +8,7 @@ ControlP5 cp5;
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 
-int Nmax = 1000 ; float M = 50 ; float H = 0.99 ; float HH = 0.01 ;
+int Nmax = 500 ; float M = 50 ; float H = 0.99 ; float HH = 0.01 ;
 
 float X[] = new float[Nmax+1] ; float Y[] = new float[Nmax+1] ; float Z[] = new float[Nmax+1] ;
 float V[] = new float[Nmax+1] ; float dV[] = new float[Nmax+1] ; 
@@ -92,63 +92,53 @@ void draw(){
      if ( Z[N] > 0 && L < Lmin ){ NN = N ; Lmin = L ; }
   }
   
-  //if(value == 130){
-  //    if ( K == 0){ dV[NN] = -0 ; K = 1 ; }
-  //         else{ dV[NN] = +0 ; K = 0 ; }
-  //}
-  if(value == 120){
+  
+  if(value == 17 || value == 18 || value == 19){
       if ( K == 0 ){ dV[NN] = -0 ; K = 1 ; }
            else{ dV[NN] = +0 ; K = 0 ; }
+    }
+  
+
+  
+  
+  if(value ==16){
+      if ( K == 0 ){ dV[NN] = -2 ; K = 1 ; }
+           else{ dV[NN] = +2 ; K = 0 ; }
   }
-  if(value == 110){
-      if ( K == 0 ){ dV[NN] = -0 ; K = 1 ; }
-           else{ dV[NN] = +0 ; K = 0 ; }
-  }
-  if(value == 100){
+  
+  
+  if(value == 15){
       if ( K == 0 ){ dV[NN] = -4 ; K = 1 ; }
            else{ dV[NN] = +4 ; K = 0 ; }
   }
-  if(value == 90){
+  
+  
+  if(value == 14){
       if ( K == 0 ){ dV[NN] = -8 ; K = 1 ; }
            else{ dV[NN] = +8 ; K = 0 ; }
   }
-  if(value == 80){
+  
+  
+  if(value == 13){
+      if ( K == 0 ){ dV[NN] = -12 ; K = 1 ; }
+           else{ dV[NN] = +12 ; K = 0 ; }
+  }
+  
+  
+  if(value == 12){
       if ( K == 0 ){ dV[NN] = -15 ; K = 1 ; }
            else{ dV[NN] = +15 ; K = 0 ; }
   }
-  if(value == 70){
-      if ( K == 0 ){ dV[NN] = -30 ; K = 1 ; }
-           else{ dV[NN] = +30 ; K = 0 ; }
+  if(value == 11){
+      if ( K == 0 ){ dV[NN] = -20 ; K = 1 ; }
+           else{ dV[NN] = +20 ; K = 0 ; }
   }
-  if(value == 60){
-      if ( K == 0 ){ dV[NN] = -40 ; K = 1 ; }
-           else{ dV[NN] = +40 ; K = 0 ; }
+  if(value == 10){
+      if ( K == 0 ){ dV[NN] = -25 ; K = 1 ; }
+           else{ dV[NN] = +25 ; K = 0 ; }
   }
-  if(value == 50){
-      if ( K == 0 ){ dV[NN] = -80 ; K = 1 ; }
-           else{ dV[NN] = +80 ; K = 0 ; }
-  }
-  //if(value == 40){è
-  //    if ( K == 0 ){ dV[NN] = -40 ; K = 1 ; }
-  //         else{ dV[NN] = +40 ; K = 0 ; }
-  //}
-  //if(value == 30){
-  //    if ( K == 0 ){ dV[NN] = -45 ; K = 1 ; }
-  //         else{ dV[NN] = +45 ; K = 0 ; }
-  //}
-  //if(value == 20){
-  //    if ( K == 0 ){ dV[NN] = -50 ; K = 1 ; }
-  //         else{ dV[NN] = +50 ; K = 0 ; }
-  //}
- /* if(value == 12){
-      if ( K == 0 ){ dV[NN] = -55 ; K = 1 ; }
-           else{ dV[NN] = +55 ; K = 0 ; }
-  }
-  if(value == 13){
-      if ( K == 0 ){ dV[NN] = -60 ; K = 1 ; }
-           else{ dV[NN] = +60 ; K = 0 ; }
-  }*/
-}
+    
+}//fin draw
 
 
       void oscEvent(OscMessage theOscMessage) {  //For communication between Processing and Pure data
