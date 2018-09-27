@@ -1,9 +1,3 @@
-'''Wiiboard driver -- pygame style
-Nedim Jackman December 2008
-No liability held for any use of this software.
-More information at http://code.google.com/p/wiiboard-simple/
-'''
-
 import bluetooth
 import sys
 import thread
