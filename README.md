@@ -11,7 +11,7 @@ On raspberry pi must be run with python2.7 the following scripts: stabilowii_*.p
 
 It is necessary to first launch servers 1 and 2 on the computer to receive the data extract by the 2 raspberry pi.  
 
-Also, you have to launch puredata to obtain the sound feedback and processing to obtain the visual feedback. 
+Also, you have to launch puredata to obtain the sound feedback (sound_distorsion_com.pd) and processing to obtain the visual feedback (sketch_sphere_lisse_communication.pde). 
 
 Finally, you must launch wii_visual.py which allows you to display the graphs. The latter uses pyqtgraph on python3.6
 
