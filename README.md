@@ -16,3 +16,8 @@ Also, you have to launch puredata to obtain the sound feedback (sound_distorsion
 Finally, you must launch wii_visual.py which allows you to display the graphs. The latter uses pyqtgraph on python3.6
 
 When all the script are setup you can push button on each board and go on it.  You will see all the scripts working together. 
+
+
+
+######## 
+Several areas for improvement can be considered, such as standardizing the languages used (all in Python) and moving to object programming for greater efficiency and readability.
