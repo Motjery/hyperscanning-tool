@@ -3,7 +3,7 @@ The purpose of this project is to make a hyperscanningtool from the following el
 
 - 2 wiifit balance board 
 - 2 linux computer it can be 2 raspberry pi for example. 
-- 1 computer to manage all calculations (better if i work on unix)
+- 1 computer to manage all calculations (better if it work on unix)
 
 This project uses the following technologies: Python network programming, Processing(Java), Puredata 
 
